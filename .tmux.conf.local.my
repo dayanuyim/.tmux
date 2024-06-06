@@ -5,6 +5,16 @@
 #         Copyright 2012— Gregory Pakosz (@gpakosz).
 
 
+# -- bindings ------------------------------------------------------------------
+
+# preserve tmux stock bindings,
+# while adding bindings that don't conflict with these stock bindings
+# /!\ this disables some of Oh my tmux! bindings described in README.md
+#   - true
+#   - false (default)
+tmux_conf_preserve_stock_bindings=false
+
+
 # -- session creation ----------------------------------------------------------
 
 # prompt for session name when creating a new session, possible values are:
@@ -12,6 +22,12 @@
 #   - false (default)
 #   - disabled (do not modify new-session bindings)
 tmux_conf_new_session_prompt=false
+
+# new session retains current path, possible values are:
+#   - true
+#   - false (default)
+#   - disabled (do not modify new-session bindings)
+tmux_conf_new_session_retain_current_path=false
 
 
 # -- windows & pane creation ---------------------------------------------------
@@ -255,8 +271,12 @@ tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see
 #     - #{username_ssh}
 tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
 #tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
+#------ with sysinfo ------
 #tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized} | #{sysinfo} | #{?battery_status,#{battery_status},}#{?battery_percentage,#{battery_percentage},} | #{username}#{root} | #{hostname} | #{ip}"
-tmux_conf_theme_status_right="#{prefix}#{mouse}#{pairing}#{synchronized}|#{sysinfo}|#{?battery_status,#{battery_status},}#{?battery_percentage,#{battery_percentage},}|#{username}#{root}|#{hostname}|#{ip}"
+#------ with sysinfo (compact) ------
+#tmux_conf_theme_status_right="#{prefix}#{mouse}#{pairing}#{synchronized}|#{sysinfo}|#{?battery_status,#{battery_status},}#{?battery_percentage,#{battery_percentage},}|#{username}#{root}|#{hostname}|#{ip}"
+#------ with sysinfo / without battery (compact) ------
+tmux_conf_theme_status_right="#{prefix}#{mouse}#{pairing}#{synchronized}|#{sysinfo}|#{username}#{root}|#{hostname}|#{ip}"
 
 # status left style
 tmux_conf_theme_status_left_fg="$tmux_conf_theme_colour_6,$tmux_conf_theme_colour_7,$tmux_conf_theme_colour_8"
@@ -267,9 +287,14 @@ tmux_conf_theme_status_left_attr="bold,none,none"
 #tmux_conf_theme_status_right_fg="$tmux_conf_theme_colour_12,$tmux_conf_theme_colour_13,$tmux_conf_theme_colour_14"
 #tmux_conf_theme_status_right_bg="$tmux_conf_theme_colour_15,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_17"
 #tmux_conf_theme_status_right_attr="none,none,bold"
-tmux_conf_theme_status_right_fg="$tmux_conf_theme_colour_12,#ffffff,#e0e0e0,$tmux_conf_theme_colour_13,$tmux_conf_theme_colour_14,#ffffff"
-tmux_conf_theme_status_right_bg="$tmux_conf_theme_colour_15,#408040,#468cdb,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_17,#808080"
-tmux_conf_theme_status_right_attr="none,none,none,none,bold,none"
+#------ with sysinfo ------
+#tmux_conf_theme_status_right_fg="$tmux_conf_theme_colour_12,#ffffff,#e0e0e0,$tmux_conf_theme_colour_13,$tmux_conf_theme_colour_14,#ffffff"
+#tmux_conf_theme_status_right_bg="$tmux_conf_theme_colour_15,#408040,#468cdb,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_17,#808080"
+#tmux_conf_theme_status_right_attr="none,none,none,none,bold,none"
+#------ with sysinfo / without battery------
+tmux_conf_theme_status_right_fg="$tmux_conf_theme_colour_12,#ffffff,$tmux_conf_theme_colour_13,$tmux_conf_theme_colour_14,#ffffff"
+tmux_conf_theme_status_right_bg="$tmux_conf_theme_colour_15,#408040,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_17,#808080"
+tmux_conf_theme_status_right_attr="none,none,none,bold,none"
 
 # pairing indicator
 tmux_conf_theme_pairing="⚇"                 # U+2687
@@ -343,9 +368,9 @@ tmux_conf_battery_status_charging="🔌"     # U+1F50C
 tmux_conf_battery_status_discharging="🔋"  # U+1F50B
 
 tmux_conf_icon_cpu_temp="🌡 "
-tmux_conf_icon_load_avg="🧮"
-tmux_conf_icon_free_mem="🆓"
-tmux_conf_icon_disk_usage="💾"
+tmux_conf_icon_load_avg="🧮 "
+tmux_conf_icon_free_mem="🆓 "
+tmux_conf_icon_disk_usage="💾 "
 
 # clock style (when you hit <prefix> + t)
 # you may want to use %I:%M %p in place of %R in tmux_conf_theme_status_right
@@ -359,12 +384,18 @@ tmux_conf_theme_clock_style="24"
 #   - true
 #   - false (default)
 #   - disabled
-# on macOS, this requires installing reattach-to-user-namespace, see README.md
 # on Linux, this requires xsel, xclip or wl-copy
 tmux_conf_copy_to_os_clipboard=true
 
 
+# -- urlscan -------------------------------------------------------------------
+
+# options passed to urlscan
+tmux_conf_urlscan_options="--compact --dedupe"
+
+
 # -- user customizations -------------------------------------------------------
+
 # this is the place to override or undo settings
 
 # increase history size
@@ -448,6 +479,8 @@ tmux_conf_uninstall_plugins_on_reload=true
 # then, use #{foo} in e.g. the 'tmux_conf_theme_status_left' or the
 # 'tmux_conf_theme_status_right' variables.
 
+# ------------------------------------------------------------------------------
+
 # # /!\ do not remove the following line
 # EOF
 #
@@ -462,5 +495,16 @@ tmux_conf_uninstall_plugins_on_reload=true
 #   ping -c 1 1.1.1.1 >/dev/null 2>&1 && printf '✔' || printf '✘'
 # }
 #
+# wan_ip_v4() {
+#   curl -f -s -m 2 -4 ifconfig.me
+#   sleep 300                                         # sleep for 5 minutes, throttle network requests whatever the value of status-interval
+# }
+#
+# wan_ip_v6() {
+#   curl -f -s -m 2 -6 ifconfig.me
+#   sleep 300                                         # sleep for 5 minutes, throttle network requests whatever the value of status-interval
+# }
+#
 # "$@"
 # # /!\ do not remove the previous line
+# #     do not write below this line
